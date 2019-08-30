@@ -326,9 +326,11 @@ Developers are encouraged to read/watch Thomas Burleson's:
 
 ### Stateless Facades
 
-While it is a good practice to make server-side services stateless, often this goal is not performant for services in web application SPAs. 
+While it is a good practice to make server-side services stateless, often this goal is not performant for services in web/client-tier. 
 
-A Web SPA has state and that's what makes it user-friendly. To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again. Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. 
+A web SPA has state and that's what makes it user-friendly!
+
+To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again. Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. 
 
 ----
 
@@ -348,7 +350,8 @@ The ideas of Domain-Driven Design are known to pave the way for micro-service ar
 
 Whether a deployment monolith, micro frontends, or anything in between is created, depends on the use of the monorepo. If the monorepo gets an own application for each domain, a big step towards micro frontends is taken:
 
-![DDD on the Client as the Basis for Micro Frontends](micro-frontends.png)
+![DDD on the Client as the Basis for Micro Frontends](https://i.imgur.com/keOLDU3.png)
+
 
 The access restrictions discussed above ensure a loose coupling and even allow a later split to multiple repositories. Then you can talk about micro frontends in the classic sense of a micro-service architecture. However, in this case the team has to take care of versioning and distributing shared libraries which is common with micro-services.
 
