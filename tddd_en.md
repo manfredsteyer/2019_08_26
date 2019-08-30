@@ -162,6 +162,8 @@ By looking at the git commit log, Nx can also identify which libraries are *affe
 
 This change information is used to recompile only the **affected** libraries or just run their **affected** tests. Obviously, this saves a lot of time on large systems that are stored in a repository as a whole.
 
+<br/>
+
 ----
 
 ### Tactial DDD with Entities
@@ -293,14 +295,15 @@ Consider
 @Injectable ({providedIn: 'root'})
 export class FlightFacade {
 
-    private flightsSubject = new BehaviorSubject<Flight[]>([]);    
-    public flights$        = this.flightsSubject.asObservable();
+    private notifier = new BehaviorSubject<Flight[]>([]);    
+    public  flights$ = this.notifier.asObservable();
 
-    constructor (private flightService: FlightService) { }
+    constructor(private flightService: FlightService) { }
 
-    search (from: string, to: string, urgent: boolean): void {
-        const onLoad = (flights) => this.flightsSubject.next (flights);
+    search(from: string, to: string, urgent: boolean): void {
+    
         const onError = (err) => console.error ('err', err);
+        const onLoad  = (flights) => this.notifier.next(flights);
         
         this.flightService
             .find(from, to, urgent)
@@ -311,10 +314,6 @@ export class FlightFacade {
 }
 ```
 
-While it is a good practice to make server-side services stateless, often this goal is not performant forservices in SPAs. 
-
-A SPA has state and that's what makes it user-friendly. To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again. Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. 
-
 Note the use of RxJS and observables in the Facade. This means that the Facade can auto-deliver updated flight information when conditions change. Another advantage of Facades is the ability to transparently introduce Redux and ``@ngrx/store`` later when needed. This can be done without affecting any of the external application components. 
 
 > For the consumer of the facade it is not relevant whether it manages the state by it self or by delegating to a state management library.
@@ -323,6 +322,12 @@ Developers are encouraged to read/watch Thomas Burleson's:
 
 * Blog article [Push-based Architectures using RxJS + Facades](https://medium.com/@thomasburlesonIA/push-based-architectures-with-rxjs-81b327d7c32d), or 
 * YouTube video [Push-based Archtectures with RxJS](https://www.youtube.com/watch?v=HnNytR32Otk&t=1s)
+
+### Stateless Facades
+
+While it is a good practice to make server-side services stateless, often this goal is not performant for services in web application SPAs. 
+
+A Web SPA has state and that's what makes it user-friendly. To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again. Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. 
 
 ----
 
