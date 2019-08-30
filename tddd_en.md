@@ -6,7 +6,7 @@ Business and industrial applications are usually long-lived. These applications 
 
 So how can we build and maintain complex, layered software systems implemented with modern Javascript/Typescript languages like React or Angular? (hereafter both languages will referred to as TypeScript for simplicity).
 
-> Big thanks to [Thomas Burleson](https://twitter.com/ThomasBurleson) who deeply reviewed this article.
+> Big thanks to [Thomas Burleson](https://twitter.com/ThomasBurleson) who deeply reviewed and contributed to this article.
 
 ## Domain Decomposition
 
