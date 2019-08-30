@@ -20,26 +20,28 @@ Each domain (Reservations, Crew, Flights) will have business requirements and so
 
 ![image](https://user-images.githubusercontent.com/210413/64040302-5791a480-cb22-11e9-9d3e-49817071de5b.png)
 
-As the quantity of domains and the complexity of each domain increases, we struggle to keep a clean, understandable, scalable architecture. 
+As illustrated above, we have a large number of source code files for each domain. As the quantity of domains and the complexity of each domain increases, we will struggle to keep a clean, understandable, scalable architecture. 
 
 ## Why Domain-Driven Design (DDD)
 
 **Question:** So how can we manage complexity in an applicaiton with many domains?
+
 **Answer:** We should leverage Domain-Driven Design and best practices from the Angular community. 
 
 I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Domain-driven design recommends subdividing an entire system into several small, possibly self-contained subdomains.
 
-Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. Once these subdomains have been identified, the question arises as to how they should be structured and organized 
+Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. 
 
 ![image](https://user-images.githubusercontent.com/210413/64040382-83148f00-cb22-11e9-9d7b-b10ee36eec8b.png)
 
 
-**Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
-
-
 ## **Tactical Domain-Driven Design**
 
-this post you will learn:
+Once these subdomains have been identified, the question arises as to how they should be structured and organized?
+
+**Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
+
+Let's dive into Tactical Design and learn about:
 
 - How **DDD** helps to organize our application source code as smaller, manageable, coherent parts.
 - How **MonoRepos** help implementing them
@@ -50,7 +52,7 @@ As always, the examples used can be found in my [GitHub account](https://github.
 
 ----
 
-## Organization by Domain with Layers
+### Organization by Domain with Layers
 
 As shown illustration below, our modeling approach leads to column (aka swimlanes) for Domains and row subdivisions for our Layers of functionality. 
 
@@ -73,7 +75,7 @@ The use case specific ``feature`` libraries and the domain-specific domain libra
 
 > Feature related code should be placed within its domain. Sharing such code can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
 
-## Organization by Packages
+### Organization by Packages
 
 Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
 
@@ -88,7 +90,7 @@ util | Include general utility functions | formatDate
 This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
 
 
-## Isolate the Domain
+### Isolate the Domain
 
 To isolate the domain logic, one should consider issues of state management and push-based architectures. Two (2) excellent articles are available for deep dives into those areas:
 
