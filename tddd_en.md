@@ -1,58 +1,68 @@
 # Domain-Driven Design + MonoRepos?
 
-## Why Domain-Driven Design (DDD)
+## Introduction
 
-Business and industrial applications are usually long-lived. These applications include customer-facing applications layered with complex backend services and systems. Many of these applications are now implemented with web frontends using JavaScript. 
-
-How can proven architecture concepts can be with JavaScript frameworks to build and maintain complex, layered systems?
-
-The answer leverages Domain-Driven Design and best practices from the Angular community. As I've already written about the use of [Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/) in Angular applications, this article focuses on the other side of the coin: **Tactical Design**.
+Business and industrial applications are usually long-lived. These applications include customer-facing applications layered with complex backend services and systems. Many of these applications are now implemented with web frontends using JavaScript. So how can we build and maintain complex, layered software systems with modern Javascript/Typescript frameworks?
 
 > Big thanks to [Thomas Burleson](https://twitter.com/ThomasBurleson) who deeply reviewed this article.
 
-## **Tactical DDD**
+## Domains in Software Architectures
 
-Tactical DDD helps to master the increasing complexity in SPAs; and is especially suitable for complex Angular solutions. In this post you will learn:
+Before we explore Domain-driven design (DDD), we should first discuss what we mean by the term [Domains](https://en.wikipedia.org/wiki/Domain_(software_engineering). A **domain** is an software term that comprises terminology, requirements, functionality, and relationships with a specific software area.
 
-- How DDD helps to substructure a big angular application into smaller parts
-- How monorepos help implementing them
-- How facades help with isolating your domain logic
-- How clientside DDD paves the way to micro frontends
+> You will probably agree that ^ was way too abstract! 😨
+
+Let's consider a software application for a consumer travellers: TravelAgent. We have several domains that we can easily define. 
+
+![image](https://user-images.githubusercontent.com/210413/64036713-73dd1380-cb19-11e9-8910-e4ee96fdb952.png)
+
+Each domain (Reservations, Crew, Flights) will have business requirements and source code for models, interfaces, data services, UI, state management, etc. 
+
+![image](https://user-images.githubusercontent.com/210413/64040302-5791a480-cb22-11e9-9d3e-49817071de5b.png)
+
+As the quantity of domains and the complexity of each domain increases, we struggle to keep a clean, understandable, scalable architecture. 
+
+## Why Domain-Driven Design (DDD)
+
+**Question:** So how can we manage complexity in an applicaiton with many domains?
+**Answer:** We should leverage Domain-Driven Design and best practices from the Angular community. 
+
+I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Domain-driven design recommends subdividing an entire system into several small, possibly self-contained subdomains.
+
+Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. Once these subdomains have been identified, the question arises as to how they should be structured and organized 
+
+![image](https://user-images.githubusercontent.com/210413/64040382-83148f00-cb22-11e9-9d7b-b10ee36eec8b.png)
+
+
+**Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
+
+
+## **Tactical Domain-Driven Design**
+
+this post you will learn:
+
+- How **DDD** helps to organize our application source code as smaller, manageable, coherent parts.
+- How **MonoRepos** help implementing them
+- How **Facades** help with isolating your domain logic
+- How client-side DDD paves the way to micro frontends
 
 As always, the examples used can be found in my [GitHub account](https://github.com/manfredsteyer/angular-ddd).
 
 ----
 
-## Column and Row Subdividing
+## Organization by Domain with Layers
 
-Domain-driven design envisages subdividing an entire system into several small, possibly self-contained subdomains. 
+As shown illustration below, our modeling approach leads to column (aka swimlanes) for Domains and row subdivisions for our Layers of functionality. 
 
-Each subdomain has to be modeled separately and receives its own entities, which best reflect the respective business area. Once these subdomains have been identified, the question arises as to how they should be structured. 
+![image](https://user-images.githubusercontent.com/210413/64040396-8c9df700-cb22-11e9-9f02-1f014ff4e13b.png)
 
->  This approach is also called [Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1).
-
-![](./domains-layer.png)
-
-As shown illustration above, our modeling approach leads to column subdivisions of domains and row subdivisions into layers of functionality. For those aspects that are to be *shared* and used across domains, an additional vertical ``shared`` section is used. In addition, it houses technical libraries, e. g. for authentication or logging.
+Each layer now consists one (1) or more **libraries**. For those aspects that are to be *shared* and used across domains, an additional swimlane ``shared`` section is used. For example, the shared domains may comprise 1 or libraries of code. e. g. for authentication or logging.
 
 >  Note: the `shared` column corresponds to the Shared Kernel proposed by DDD and also includes technical libraries to share.
 
-Each layer now receives one or more libraries. Access rules between these libraries result in loose coupling and thus increased maintainability. Typically, each layer is only allowed to communicate with underlying layers. Also, cross-domain access is allowed only over the ``shared`` area. To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of ​​Open Services in DDD.
+Access rules between these libraries result in loose coupling and thus increased maintainability. Typically, each layer is only allowed to communicate with underlying layers. Also, cross-domain access is allowed only over the ``shared`` area. To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of Open Services in DDD.
 
-> While using layers is a quite traditional approach, there are also alternatives like hexagonal architectures or clean architectures. Regardless of using layers or other ides, in general we have to subdivide our system into subdomains and find ways to structure them.
-
-Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
-
-
-Category | Description | Exemplary content
---------- | ------------ | ---------------------
-feature | Contains components for an use case. | book-flight component 
-api | Exports building blocks from the current subdomain for others. | flight (from domain layer)
-ui | Contains so-called "dumb components" that are use-case agnostic and thus reusable. | datetime-component, address-component, adress-pipe
-domain   | Contains those parts of the domain model that are used by the frontend | flight, passenger  
-util | Include general utility functions | formatDate
-
-This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
+While using layers is a quite traditional approach, there are also alternatives like hexagonal architectures or clean architectures. Regardless of using layers or other ides, in general we have to subdivide our system into subdomains and find ways to structure them.
 
 Regarding the shared part, one can see the following two characteristics:
 
@@ -62,6 +72,21 @@ Regarding the shared part, one can see the following two characteristics:
 The use case specific ``feature`` libraries and the domain-specific domain libraries, however, are not in the shared area. 
 
 > Feature related code should be placed within its domain. Sharing such code can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
+
+## Organization by Packages
+
+Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
+
+Category | Description | Exemplary content
+--------- | ------------ | ---------------------
+feature | Contains components for an use case. | book-flight component 
+ui | Contains so-called "dumb components" that are use-case agnostic and thus reusable. | datetime-component, address-component, adress-pipe
+api | Exports building blocks from the current subdomain for others. | flight (from domain layer)
+domain   | Contains the **domain models** (classes, interfaces, types) that are used by the domain (swimlane)
+util | Include general utility functions | formatDate
+
+This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
+
 
 ## Isolate the Domain
 
