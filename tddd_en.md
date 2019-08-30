@@ -1,41 +1,57 @@
-# Domain-Driven Design + MonoRepos?
+# Domain-Driven Design with MonoRepos?
 
 ## Introduction
 
-Business and industrial applications are usually long-lived. These applications include customer-facing applications layered with complex backend services and systems. Many of these applications are now implemented with web frontends using JavaScript. So how can we build and maintain complex, layered software systems with modern Javascript/Typescript frameworks?
+Business and industrial applications are usually long-lived. These applications include customer-facing applications layered with complex backend services and systems. Many of these applications are now implemented with web frontends using JavaScript. 
+
+So how can we build and maintain complex, layered software systems implemented with modern Javascript/Typescript languages like React or Angular? (hereafter both languages will referred to as TypeScript for simplicity).
 
 > Big thanks to [Thomas Burleson](https://twitter.com/ThomasBurleson) who deeply reviewed this article.
 
-## Domains in Software Architectures
+## Domain Decomposition
 
-Before we explore Domain-driven design (DDD), we should first discuss what we mean by the term [Domains](https://en.wikipedia.org/wiki/Domain_(software_engineering). A **domain** is an software term that comprises terminology, requirements, functionality, and relationships with a specific software area.
+Before we explore Domain-driven design (DDD), we should first discuss what we mean by the term [Domains](https://en.wikipedia.org/wiki/Domain_(software_engineering). 
 
-> You will probably agree that ^ was way too abstract! 😨
+A **domain** is an software term that comprises terminology, requirements, functionality, and relationships with a specific software area. You will probably agree that this definition was way too abstract! 😨
 
-Let's consider a software application for a consumer travellers: TravelAgent. We have several domains that we can easily define. 
+Let's consider a software application we are building for a consumer travellers: TravelAgent. We have several domains that we can easily identify: 
 
 ![image](https://user-images.githubusercontent.com/210413/64036713-73dd1380-cb19-11e9-8910-e4ee96fdb952.png)
 
-Each domain (Reservations, Crew, Flights) will have business requirements and source code for models, interfaces, data services, UI, state management, etc. 
+To manage complexity of these domains, we should leverage **Domain-Driven Design** and best practices from the Angular community. 
 
-![image](https://user-images.githubusercontent.com/210413/64040302-5791a480-cb22-11e9-9d3e-49817071de5b.png)
+Domain-driven design recommends subdividing an entire system into several small, possibly self-contained domains. Each domain should be modeled separately and receives its own entities which best reflect the respective domain's business area. 
 
-As illustrated above, we have a large number of source code files for each domain. As the quantity of domains and the complexity of each domain increases, we will struggle to keep a clean, understandable, scalable architecture. 
+Enhancing the above illustration we see that each domain (Reservations, Crew, Flights) will have business requirements and source code for models, interfaces, data services, UI, state management, etc. 
+
+![](https://i.imgur.com/YIphRUN.png)
+
+
+And - for each domain - you should also anticipate that we could easily have a large number of source files and constructs. As the quantity of domains and the complexity of each domain increases, we will struggle to keep a clean, understandable, scalable architecture. 
 
 ## Domain Complexity
 
-#### So how can we manage complexity in an applicaiton with many domains?
+#### So how can we manage complexity in an application with many domains?
 
-To manage complexity, we should leverage Domain-Driven Design and best practices from the Angular community. Domain-driven design recommends subdividing an entire system into several small, possibly self-contained subdomains. Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. 
+We need to apply concepts and techniques from both:
 
-![image](https://user-images.githubusercontent.com/210413/64040382-83148f00-cb22-11e9-9d7b-b10ee36eec8b.png)
+* **[Strategic Domain Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)**
+* **Tactical Design**
 
-Once these subdomains have been identified, the question arises as to how they should be structured and organized? **Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
+
+## **Strategic Domain Design**
+
+I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Readers are encouraged to read that article for foundational understandings.
 
 
-## **Tactical Domain-Driven Design**
+## **Tactical Domain Design**
 
-I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Let's dive into **Tactical Design** and learn about:
+Once these domains have been identified, the question arises as to how they should be structured and organized? 
+
+**Tactical Design** helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions. 
+
+In this article we will learn:
+
 
 - How **DDD** helps to organize our application source code as smaller, manageable, coherent parts.
 - How **MonoRepos** help implementing them
@@ -46,44 +62,50 @@ As always, the examples used can be found in my [GitHub account](https://github.
 
 ----
 
-### Organization by Domain with Layers
+### Domain Organization using Layers
 
-As shown illustration below, our modeling approach leads to column (aka swimlanes) for Domains and row subdivisions for our Layers of functionality. Each layer now consists one (1) or more **libraries**. 
+As shown illustration below, our domain identification approach leads to column (aka swimlanes) for Domains and row subdivisions for the Layers of our functionality. 
 
 ![image](https://user-images.githubusercontent.com/210413/64040396-8c9df700-cb22-11e9-9f02-1f014ff4e13b.png)
 
-Notice the **Shared** swimlane?
+> Note how each layer could consists one (1) or more **libraries**
 
-For those aspects that are to be *shared* and used across domains, an additional swimlane ``shared`` section is used. For example, the shared domains may comprise 1 or libraries of code. e. g. for authentication or logging.
+#### What about shared functionality?
+
+For those aspects that are to be *shared* and used across domains, an additional ``Shared`` swimlane is used. Shared domains can be quite usefule. Consider - for example - a shared domain with 1 or libraries for authentication or logging.
 
 >  Note: the `shared` column corresponds to the Shared Kernel proposed by DDD and also includes technical libraries to share.
 
-Access rules between these libraries result in loose coupling and thus increased maintainability. Typically, each layer is only allowed to communicate with underlying layers. Also, cross-domain access is allowed only over the ``shared`` area. To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of Open Services in DDD.
+Access rules can be defined the constraint will libraries can use/depend upon other libraries. Typically, each layer is only allowed to communicate with underlying layers. Cross-domain access is allowed only with the ``shared`` area. The benefit of using these restrictions can result in loose coupling and thus increased maintainability. 
+
+> To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of Open Services in DDD.
 
 Regarding the shared part, one can see the following two characteristics:
 
 *  As the grayed-out blocks indicate, most ``util`` libraries are in the ``shared`` area, especially as aspects such as authentication or logging are used across systems. The same applies to general UI libraries that ensure a system-wide look and feel.
 * UI features contained in the `shared` library are usually global UI, custom UI component libraries, etc.
 
-The use case specific ``feature`` libraries and the domain-specific domain libraries, however, are not in the shared area. 
+#### What about feature-specific funcitionality?
 
-> Feature related code should be placed within its domain. Sharing such code can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
+Notice that domain-specific `feature` libraries, however, are not in the shared area. Feature-related code should be placed within its own domain. 
+
+While developers may elect to share feature code [between domains], this practice can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
 
 ----
 
-### Organization with Folders and Packages
+### Code Organization 
 
 Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
 
 Category | Description | Exemplary content
 --------- | ------------ | ---------------------
-feature | Contains components for an use case. | book-flight component 
+feature | Contains components for an use case. | search-flight component 
 ui | Contains so-called "dumb components" that are use-case agnostic and thus reusable. | datetime-component, address-component, adress-pipe
-api | Exports building blocks from the current subdomain for others. | flight (from domain layer)
+api | Exports building blocks from the current subdomain for others. | Flight API
 domain   | Contains the **domain models** (classes, interfaces, types) that are used by the domain (swimlane)
 util | Include general utility functions | formatDate
 
-This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
+This complete architectural matrix is initially overwhelming. But after a brief review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
 
 ----
 
@@ -96,7 +118,8 @@ To isolate the domain logic, one should consider issues of state management and 
 
 >  These approaches - which encapsulate domain logic and manages changes to state - leverage the concepts of Facades.
 
-![Isolating the Domain Layer](./isolate.png)
+![Isolating the Domain Layer](https://i.imgur.com/sjxc4we.png)
+
 
 While facades are currently quite popular in the Angular environment, this idea also correlates wonderfully with DDD (where they are called application services). 
 
@@ -110,15 +133,12 @@ In an SPA, infrastructure concerns are -- at least most of the time -- asynchnro
 
 Of course, these layers can now also be packaged in their own libraries. For the sake of simplicity, it is also possible to store them in a single library, which is subdivided accordingly. This decision to use a single grouping library makes senses if these layers are usually used together [and only need to be exchanged for unit tests].
 
-### Implementation with a monorepo
+
+### Implementations in a MonoRepos
 
 Once the components of our architecture have been determined, the question arises of how they can be implemented in the world of Angular. A very common approach also used by Google itself is the monorepo. It is a code repository that contains all the libraries of a software system.
 
-Among other things, monorepos simplify the use of shared code, such as the previously discussed shared area, as it no longer needs to be versioned and distributed. Instead, there are always the most recent stable versions of each library in the master branch. 
-
 While a project created with the Angular CLI can nowadays be used as a monorepo, the popular tool [Nx](https://nx.dev/) offers some additional possibilities which are especially valuable for large enterprise solutions. These include the previously discussed ways to introduce [access restrictions between libraries](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-2/). This prevents each library from accessing each other, resulting in a highly coupled overall system.
-
-In addition, by looking at the git commit log, Nx can identify which libraries are affected by the latest code changes. This change information is used to recompile only the **affected** libraries or just run their **affected** tests. Obviously, this saves a lot of time on large systems that are stored in a repository as a whole.
 
 To create a library in a Monorepo, one instruction is enough:
 
@@ -126,21 +146,27 @@ To create a library in a Monorepo, one instruction is enough:
 generate library domain --directory boarding
 ```
 
-The switch ``directory`` provided by Nx specifies an optional subdirectory where the libraries are to be put. This way, they can be grouped by the domains of the system:
+The switch ``directory`` provided by Nx specifies an optional subdirectory where the libraries are to be put. This way, they can be **grouped by domain** within the library file system:
 
-![Illustration of the domains and layers in the monorepo](folder.png)
+![](https://i.imgur.com/rvHJz5h.png)
 
-The names of the libraries reflect the layers. If a layer has several libraries, it makes sense to use these names as a prefix. This results in names such as ``feature-search`` or ``feature-edit``.
 
-In order to isolate the actual domain model, the example shown here divides the domain library into the three further layers mentioned:
 
-![Isolation of Domain Model](folder-domain.png)
+* The names of the libraries also reflect the layers. 
+* If a layer has several libraries, it makes sense to use these names as a prefix. This results in names such as ``feature-search`` or ``feature-edit``.
+* In order to isolate the actual domain model, the example shown here divides the domain library into the three further layers mentioned:
+
+#### Builds within a MonoRepos
+
+By looking at the git commit log, Nx can also identify which libraries are *affected by the latest code changes*. 
+
+This change information is used to recompile only the **affected** libraries or just run their **affected** tests. Obviously, this saves a lot of time on large systems that are stored in a repository as a whole.
 
 ----
 
-### Tactial Design + Entities
+### Tactial DDD with Entities
 
-Tactical Design provides many ideas for structuring the domain layer. At the center of this layer, there are **entities** reflecting the real world domain.  
+Tactical Design provides many ideas for structuring the domain layer. At the center of this layer, there are **entities** the reflecting real world domain and constructs.  
 
 The following listing shows an enum and two entities that conform to the usual practices of object-oriented languages such as Java or C#.
  
@@ -176,20 +202,26 @@ public class BoardingListEntry {
 }
 ```
 
-As usual in object orientation, these entities use information hiding to ensure that their state remains consistent. You implement this with private fields and public methods that operate on them.
- 
-In addition, these entities not only encapsulate data, but also business rules. At least the method ``setStatus`` indicates this circumstance. Only for cases where business rules can not be meaningfully accommodated in an entity, DDD defines so-called domain services.
+As usual in OO-land, these entities use information hiding to ensure that their state remains consistent. You implement this with private fields and public methods that operate on them. 
+
+These entities not only encapsulate data, but also business rules. At least the method ``setStatus`` indicates this circumstance. Only for cases where business rules can not be meaningfully accommodated in an entity, DDD defines so-called domain services.
+
+#### Tip:
 
 Entities that only represent data structures are frowned upon in DDD. The community calls them devaluing [bloodless (anemic)](https://martinfowler.com/bliki/AnemicDomainModel.html).
 
-From an object-oriented point of view, this may be correct. However, with languages such as JavaScript and TypeScript, object orientation is less important. Rather, they are multi-paradigm languages in which functional programming is particularly important.
- 
-Works dealing with functional DDD can be reviewed here:
+### Tactical DDD with Functional Programming
+
+From an object-oriented point of view, the previous approach makes sense. However - with languages such as JavaScript and TypeScript () - object-orientation is less important. 
+
+Typescript is multi-paradigm languages in which Functional Programming is particularly important. Articles dealing with Functional DDD can be reviewed here:
 
 * [Domain Modeling Made Funcitonal](https://pragprog.com/book/swdddf/domain-modeling-made-functional),
 * [Functional and Reactive Domain Modeling](https://www.amzn.com/1617292249).
 
-With functional programming, the previously considered entity model would therefore be separated in TypeScript into a data part and a logic part:
+With functional programming, the previously considered entity model would therefore be separated in TypeScript into a data part and a logic part. [Domain-Driven Design Distilled](https://www.amzn.com/0134434420) which is one of the standard works for DDD and primarily relies on OOP, admits that this rule change is necessary in the world of FP.
+
+Consider:
 
 
 ```Typescript
@@ -219,21 +251,16 @@ export function updateBoardingStatus (
 }
 ```
  
-> Also [Domain-Driven Design Distilled](https://www.amzn.com/0134434420) which is one of the standard works for DDD and primarily relies on OOP, admits that this rule change is necessary in the world of FP.
 
-Here the entities also use public properties. This too is quite common in FP
+Here the entities also use public properties. This practice is quite common in FP; since the excessive use of getters and setters, which only delegate to private properties, is often ridiculed!
 
-> Note: with FP the excessive use of getters and setters, which only delegate to private properties, is often ridiculed!
-
-Now, of course, there is a lot to argue about what the better style is. 
-
-Much more interesting, however, is the question of how the functional world avoids inconsistent states. The answer is amazingly simple: data structures are preferably **immutable**. The keyword ``readonly`` in the example shown emphasizes this.
+Much more interesting, however, is the question of how the Functional world avoids inconsistent states. The answer is amazingly simple: data structures are preferably **immutable**. The keyword ``readonly`` in the example shown emphasizes this.
 
 A part of the program that wants to change such objects has to clone it, and if other parts of the program have first validated an object for their own purposes, they can assume that it remains valid.
 
 > A wonderful side-affect of using immutable data structures is that change detection performance is optimized. No longer are *deep-comparisons* required. Instead a *changed* object is actually a new instance and thus the object references will no longer be the same.
 
-### Tactial Design + Aggregates
+### Tactial DDD with Aggregates
 
 To keep track of the components of a domain model, Tactical DDD combines entities into aggregates. In the last example, ``BoardingList`` and ``BoardingListEntry`` form such an aggregate.
  
@@ -241,49 +268,61 @@ The state of all components of an aggregate must be consistent as a whole. For e
 
 In addition, different aggregates may not reference each other through object references. Instead, they can use IDs. This should prevent unnecessary coupling between aggregates. Large domains can thus be broken down into smaller groups of aggregates.
 
+#### Tip:
+
 [Domain-Driven Design Distilled](https://www.amzn.com/0134434420) suggests making aggregates as small as possible. First of all, consider each entity as an aggregate and then merge aggregates that need to be changed together without delay.
 
+<br/>
 
-## Facades aka Application Services
+----
 
-The task of the Application Services is to represent details of the domain model for specific use cases. Independent of DDD, this idea has been very popular in the world of Angular for some time. 
+## Facades
 
-This is also referred to as **[facades](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book)**:
+**[Facades](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book)** (aka Applications Services) are used:
+
+* encapsulate complexity
+* provide a simplified API 
+* provide an API for specific use cases. 
+ 
+Independent of DDD, this idea has been very popular in the world of Angular for some time. 
+
+Consider
  
 
 ```typescript
 @Injectable ({providedIn: 'root'})
 export class FlightFacade {
 
-    private flightsSubject = new BehaviorSubject<Flight[]>([]);
-    public flights$ = this.flightsSubject.asObservable();
+    private flightsSubject = new BehaviorSubject<Flight[]>([]);    
+    public flights$        = this.flightsSubject.asObservable();
 
-    constructor (private flightService: FlightService) {
-    }
+    constructor (private flightService: FlightService) { }
 
     search (from: string, to: string, urgent: boolean): void {
-
-        this.flightService.find(from, to, urgent).subscribe (
-            flights => {
-                this.flightsSubject.next (flights)
-            },
-            err => {
-                console.error ('err', err);
-            }
-        );
+        const onLoad = (flights) => this.flightsSubject.next (flights);
+        const onError = (err) => console.error ('err', err);
+        
+        this.flightService
+            .find(from, to, urgent)
+            .subscribe ( onLoad, onError );
         
         return this.flights$;
     }
 }
 ```
 
-While it is a good practice to make server-side services stateless, this does not apply to services in SPAs. A SPA has state and that's what makes it user-friendly. To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again.
+While it is a good practice to make server-side services stateless, often this goal is not performant forservices in SPAs. 
 
-Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. For this, it uses observables. This means that the Facade can auto-deliver updated flight information when conditions change.
+A SPA has state and that's what makes it user-friendly. To avoid UX issues, Angular applications do not want to reload all the information from the server over and over again. Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. 
 
-Another advantage of Facades is the ability to transparently introduce Redux and ``@ngrx/store`` later when needed. This can be done without affecting any of the external application components. 
+Note the use of RxJS and observables in the Facade. This means that the Facade can auto-deliver updated flight information when conditions change. Another advantage of Facades is the ability to transparently introduce Redux and ``@ngrx/store`` later when needed. This can be done without affecting any of the external application components. 
 
 > For the consumer of the facade it is not relevant whether it manages the state by it self or by delegating to a state management library.
+
+Developers are encouraged to read/watch Thomas Burleson's:
+
+* Blog article [Push-based Architectures using RxJS + Facades](https://medium.com/@thomasburlesonIA/push-based-architectures-with-rxjs-81b327d7c32d), or 
+* YouTube video [Push-based Archtectures with RxJS](https://www.youtube.com/watch?v=HnNytR32Otk&t=1s)
 
 ----
 
