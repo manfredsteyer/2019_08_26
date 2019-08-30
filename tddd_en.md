@@ -69,7 +69,9 @@ The use case specific ``feature`` libraries and the domain-specific domain libra
 
 > Feature related code should be placed within its domain. Sharing such code can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
 
-### Organization by Packages
+----
+
+### Organization with Folders and Packages
 
 Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
 
@@ -83,6 +85,7 @@ util | Include general utility functions | formatDate
 
 This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
 
+----
 
 ### Isolate the Domain
 
