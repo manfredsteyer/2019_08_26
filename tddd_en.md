@@ -10,11 +10,11 @@ So how can we build and maintain complex, layered software systems implemented w
 
 ## Domain Decomposition
 
-Before we explore Domain-driven design (DDD), we should first discuss what we mean by the term [Domains](https://en.wikipedia.org/wiki/Domain_(software_engineering). 
+Before we explore Domain-driven design (DDD), we should first discuss what we mean by the term [Domains](http://bit.ly/2Pu9IxE).  A **domain** is an software term that comprises terminology, requirements, functionality, and relationships with a specific application area/context. 
 
-A **domain** is an software term that comprises terminology, requirements, functionality, and relationships with a specific software area. You will probably agree that this definition was way too abstract! 😨
+> You will probably agree that this definition was way too abstract! 😨
 
-Let's consider a software application we are building for a consumer travellers: TravelAgent. We have several domains that we can easily identify: 
+Let's consider a consumer travel web application we are building: TravelAgent. We have several domains that we can easily identify: 
 
 ![image](https://user-images.githubusercontent.com/210413/64036713-73dd1380-cb19-11e9-8910-e4ee96fdb952.png)
 
