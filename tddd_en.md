@@ -22,26 +22,20 @@ Each domain (Reservations, Crew, Flights) will have business requirements and so
 
 As illustrated above, we have a large number of source code files for each domain. As the quantity of domains and the complexity of each domain increases, we will struggle to keep a clean, understandable, scalable architecture. 
 
-## Why Domain-Driven Design (DDD)
+## Domain Complexity
 
-**Question:** So how can we manage complexity in an applicaiton with many domains?
+#### So how can we manage complexity in an applicaiton with many domains?
 
-**Answer:** We should leverage Domain-Driven Design and best practices from the Angular community. 
-
-I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Domain-driven design recommends subdividing an entire system into several small, possibly self-contained subdomains.
-
-Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. 
+To manage complexity, we should leverage Domain-Driven Design and best practices from the Angular community. Domain-driven design recommends subdividing an entire system into several small, possibly self-contained subdomains. Each subdomain should be modeled separately and receives its own Entities, which best reflect the respective business area. 
 
 ![image](https://user-images.githubusercontent.com/210413/64040382-83148f00-cb22-11e9-9d7b-b10ee36eec8b.png)
+
+Once these subdomains have been identified, the question arises as to how they should be structured and organized? **Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
 
 
 ## **Tactical Domain-Driven Design**
 
-Once these subdomains have been identified, the question arises as to how they should be structured and organized?
-
-**Tactical Design**, however, helps us master the increasing complexity in SPAs with clear code organization and specific constructs useful to encapsulate and hide complexity. Best of all, Tactical DDD is especially suitable for complex Angular solutions.
-
-Let's dive into Tactical Design and learn about:
+I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Let's dive into **Tactical Design** and learn about:
 
 - How **DDD** helps to organize our application source code as smaller, manageable, coherent parts.
 - How **MonoRepos** help implementing them
@@ -54,17 +48,17 @@ As always, the examples used can be found in my [GitHub account](https://github.
 
 ### Organization by Domain with Layers
 
-As shown illustration below, our modeling approach leads to column (aka swimlanes) for Domains and row subdivisions for our Layers of functionality. 
+As shown illustration below, our modeling approach leads to column (aka swimlanes) for Domains and row subdivisions for our Layers of functionality. Each layer now consists one (1) or more **libraries**. 
 
 ![image](https://user-images.githubusercontent.com/210413/64040396-8c9df700-cb22-11e9-9f02-1f014ff4e13b.png)
 
-Each layer now consists one (1) or more **libraries**. For those aspects that are to be *shared* and used across domains, an additional swimlane ``shared`` section is used. For example, the shared domains may comprise 1 or libraries of code. e. g. for authentication or logging.
+Notice the **Shared** swimlane?
+
+For those aspects that are to be *shared* and used across domains, an additional swimlane ``shared`` section is used. For example, the shared domains may comprise 1 or libraries of code. e. g. for authentication or logging.
 
 >  Note: the `shared` column corresponds to the Shared Kernel proposed by DDD and also includes technical libraries to share.
 
 Access rules between these libraries result in loose coupling and thus increased maintainability. Typically, each layer is only allowed to communicate with underlying layers. Also, cross-domain access is allowed only over the ``shared`` area. To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of Open Services in DDD.
-
-While using layers is a quite traditional approach, there are also alternatives like hexagonal architectures or clean architectures. Regardless of using layers or other ides, in general we have to subdivide our system into subdomains and find ways to structure them.
 
 Regarding the shared part, one can see the following two characteristics:
 
