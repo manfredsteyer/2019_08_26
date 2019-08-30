@@ -8,9 +8,11 @@ How can proven architecture concepts can be with JavaScript frameworks to build 
 
 The answer leverages Domain-Driven Design and best practices from the Angular community. As I've already written about the use of [Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/) in Angular applications, this article focuses on the other side of the coin: **Tactical Design**.
 
+> Big thanks to [Thomas Burleson](https://twitter.com/ThomasBurleson) who deeply reviewed this article.
+
 ## **Tactical DDD**
 
-Tactical DDD helps to master the increasing complexity in SPAs; and is especially suitable for complext Angular solutions. In this post you will learn:
+Tactical DDD helps to master the increasing complexity in SPAs; and is especially suitable for complex Angular solutions. In this post you will learn:
 
 - How DDD helps to substructure a big angular application into smaller parts
 - How monorepos help implementing them
@@ -21,7 +23,7 @@ As always, the examples used can be found in my [GitHub account](https://github.
 
 ----
 
-## Column + Row SubDomains
+## Column and Row Subdividing
 
 Domain-driven design envisages subdividing an entire system into several small, possibly self-contained subdomains. 
 
@@ -31,11 +33,13 @@ Each subdomain has to be modeled separately and receives its own entities, which
 
 ![](./domains-layer.png)
 
-As shown illustration above ^, our modeling approach leads to column subdivisions of domain types and row subdivisions into layers of functionality. For those aspects that are to be *shared* and used across domains, an additional vertical ``shared`` section is used. In addition, it houses technical libraries, e. g. for authentication or logging.
+As shown illustration above, our modeling approach leads to column subdivisions of domains and row subdivisions into layers of functionality. For those aspects that are to be *shared* and used across domains, an additional vertical ``shared`` section is used. In addition, it houses technical libraries, e. g. for authentication or logging.
 
->  Note: the `shared` column corresponds to the Shared Kernel proposed by DDD.
+>  Note: the `shared` column corresponds to the Shared Kernel proposed by DDD and also includes technical libraries to share.
 
 Each layer now receives one or more libraries. Access rules between these libraries result in loose coupling and thus increased maintainability. Typically, each layer is only allowed to communicate with underlying layers. Also, cross-domain access is allowed only over the ``shared`` area. To prevent too much logic to be put into the ``shared`` area, the approach presented here also uses APIs that publish building blocks for other domains. This corresponds to the idea of ​​Open Services in DDD.
+
+> While using layers is a quite traditional approach, there are also alternatives like hexagonal architectures or clean architectures. Regardless of using layers or other ides, in general we have to subdivide our system into subdomains and find ways to structure them.
 
 Based on Nrwl.io's [Enterprise MonoRepository Patterns](https://go.nrwl.io/angular-enterprise-monorepo-patterns-new-book), I distinguish between five (5) categories of layers or libraries:
 
@@ -48,14 +52,16 @@ ui | Contains so-called "dumb components" that are use-case agnostic and thus re
 domain   | Contains those parts of the domain model that are used by the frontend | flight, passenger  
 util | Include general utility functions | formatDate
 
-This complete architectural matrix is initially overwhelming. But after review, developers all agree that the code organization facilitates code reuse and future features. 
+This complete architectural matrix is initially overwhelming. But after review, almost all developers I've consulted agreed that the code organization facilitates code reuse and future features. 
+
+Regarding the shared part, one can see the following two characteristics:
 
 *  As the grayed-out blocks indicate, most ``util`` libraries are in the ``shared`` area, especially as aspects such as authentication or logging are used across systems. The same applies to general UI libraries that ensure a system-wide look and feel.
 * UI features contained in the `shared` library are usually global UI, custom UI component libraries, etc.
 
 The use case specific ``feature`` libraries and the domain-specific domain libraries, however, are not in the shared area. 
 
-> Feature UI should be partitioned within each domain feature UI library. Sharing feature UIs can lead to shared responsibilities, more coordination effort, and breaking changes, it should be handled sparingly.
+> Feature related code should be placed within its domain. Sharing such code can lead to shared responsibilities, more coordination effort, and breaking changes. Hence, it should only be shared sparingly.
 
 ## Isolate the Domain
 
@@ -64,7 +70,7 @@ To isolate the domain logic, one should consider issues of state management and 
 * [Ngrx + Facades: Better State Management](https://medium.com/@thomasburlesonIA/ngrx-facades-better-state-management-82a04b9a1e39)
 * [Push-based Archtectures with RxJS](https://medium.com/@thomasburlesonIA/push-based-architectures-with-rxjs-81b327d7c32d)
 
->  These approaches - which encapsulate domain logic will also managing changes to state - leverage the concepts of Facades (aka View Models).
+>  These approaches - which encapsulate domain logic and manages changes to state - leverage the concepts of Facades.
 
 ![Isolating the Domain Layer](./isolate.png)
 
@@ -72,7 +78,7 @@ While facades are currently quite popular in the Angular environment, this idea 
 
 It is also important to architecturally separate *infrastructure requirements* from the actual domain logic. 
 
-In an SPA, infrastructure concerns are asynchnronous communication with the server and data exchanges. Maintaining this separation results in three additional layers: 
+In an SPA, infrastructure concerns are -- at least most of the time -- asynchnronous communication with the server and data exchanges. Maintaining this separation results in three additional layers: 
 
 * the api layer with facades, 
 * the actual domain layer, and 
@@ -157,10 +163,7 @@ From an object-oriented point of view, this may be correct. However, with langua
 Works dealing with functional DDD can be reviewed here:
 
 * [Domain Modeling Made Funcitonal](https://pragprog.com/book/swdddf/domain-modeling-made-functional),
-* [Functional and Reactive Domain Modeling](https://www.amzn.com/1617292249), 
-* [Domain-Driven Design Distilled](https://www.amzn.com/0134434420), 
-
-> The last item above ^ is one of the standard works for DDD which primarily relying on OOP, admits that this rule change is necessary in the world of FP.
+* [Functional and Reactive Domain Modeling](https://www.amzn.com/1617292249).
 
 With functional programming, the previously considered entity model would therefore be separated in TypeScript into a data part and a logic part:
 
@@ -192,6 +195,7 @@ export function updateBoardingStatus (
 }
 ```
  
+> Also [Domain-Driven Design Distilled](https://www.amzn.com/0134434420) which is one of the standard works for DDD and primarily relies on OOP, admits that this rule change is necessary in the world of FP.
 
 Here the entities also use public properties. This too is quite common in FP
 
@@ -253,7 +257,7 @@ While it is a good practice to make server-side services stateless, this does no
 
 Optimizing data loads is also supported in the Facade by keeping the retrieved flights for later use. For this, it uses observables. This means that the Facade can auto-deliver updated flight information when conditions change.
 
-Another advantage of Facades is the ability to transparently introduce Redux and ``@ngrx/store`` later when needed... without affecting any of the external application components. 
+Another advantage of Facades is the ability to transparently introduce Redux and ``@ngrx/store`` later when needed. This can be done without affecting any of the external application components. 
 
 > For the consumer of the facade it is not relevant whether it manages the state by it self or by delegating to a state management library.
 
@@ -267,7 +271,7 @@ This also perfectly fits to DDD, where the use of **domain events** are now part
 
 In the shown example, a domain event could indicate that a passenger is now BOARDED. If this is interesting for other parts of the system they can execute specific logics. 
 
-> For Angular developers familiar with Redux or Ngrx, domain events are *dispatched actions*!
+> For Angular developers familiar with Redux or Ngrx, domain events can be represented as *dispatched actions*!
 
 ## Domain-Driven Design and Micro Frontends?
 
@@ -283,7 +287,7 @@ The access restrictions discussed above ensure a loose coupling and even allow a
 
 Modern single page applications (SPAs) are often more than just recipients of data transfer objects (DTOs). They contain often contain significant domain logic; which adds complexity. Ideas from DDD help developers manage and scale with the resulting complexity.
 
-Due to the object-functional nature of TypeScript and prevailing customs, a few rule changes are necessary:
+Due to the object-functional nature of TypeScript and prevailing customs, a few rule changes are necessary. The implementation outlined here bases upon the following ideas:
 
 * The use of monorepos with multiple libraries grouped by domains helps building the basic structure and access restrictions between libraries prevent coupling between domains. 
 * Facades prepare the domain model for individual use cases and take care of maintaining the state. 
