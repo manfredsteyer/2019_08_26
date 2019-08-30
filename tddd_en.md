@@ -66,7 +66,8 @@ As always, the examples used can be found in my [GitHub account](https://github.
 
 As shown illustration below, our domain identification approach leads to column (aka swimlanes) for Domains and row subdivisions for the Layers of our functionality. 
 
-![image](https://user-images.githubusercontent.com/210413/64040396-8c9df700-cb22-11e9-9f02-1f014ff4e13b.png)
+![](https://i.imgur.com/4zqj2QZ.png)
+
 
 > Note how each layer could consists one (1) or more **libraries**
 
