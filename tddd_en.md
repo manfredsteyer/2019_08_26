@@ -28,20 +28,18 @@ Let's consider a consumer travel web application we are building. We have severa
 
 To manage complexity of these domains, we should leverage **Domain-Driven Design** and best practices from the Angular community. 
 
-Domain-driven design recommends subdividing an entire system into several small, possibly self-contained domains. Each domain should be modeled separately and receives its own entities which best reflect the respective domain's business area. 
-
-
-## Domain Complexity
-
-#### So how can we manage complexity in an application with many domains?
-
-We need to apply concepts and techniques from both parts of DDD:
+Domain Driven Design comes with the two types of design
 
 * **[Strategic Domain Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)**
 * **Tactical Design**
 
+While the former one is about identifying domains and the communication between them, tactical design deals with structuring these domains.
+
 I've already written about the use of **[Strategic Design](https://www.softwarearchitekt.at/aktuelles/sustainable-angular-architectures-1/)** in Angular applications. Readers are encouraged to read that article for foundational understandings. Hence, here, I'll focus on Tactical Domain Design.
 
+## Applying Tactical Design
+
+Now let's talk about how to structure our application with tactical design.
 
 ### Domain Organization using Layers
 
